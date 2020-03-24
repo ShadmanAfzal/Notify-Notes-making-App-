@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'dart:convert' show json;
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -286,14 +287,21 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                   child: Column(
                                     children: <Widget>[
                                       Container(
-                                        child: SelectableText(
-                                          list[index]['body'],
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: "Rosemary"
-                                              // color: Colors.black,
-                                              ),
-                                          showCursor: false,
+                                        child: GestureDetector(
+                                          onLongPress: () {
+                                            Clipboard.setData(new ClipboardData(
+                                                text: list[index]['body']));
+                                            showsnackbar(
+                                                "Copied to Clipboard", 3);
+                                          },
+                                          child: Text(
+                                            list[index]['body'],
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontFamily: "Rosemary"
+                                                // color: Colors.black,
+                                                ),
+                                          ),
                                         ),
                                       ),
                                     ],
