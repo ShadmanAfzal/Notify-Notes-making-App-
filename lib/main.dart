@@ -49,7 +49,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         'http://justinkhan.pythonanywhere.com/api/note_delete',
         body: data2);
     if (response.statusCode != 200) {
-      showsnackbar("Unable to Delete");
+      showsnackbar("Unable to Delete", 3);
     }
     return "Success";
   }
@@ -59,7 +59,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     var response = await http
         .post('http://justinkhan.pythonanywhere.com/api/note_in', body: data1);
     if (response.statusCode != 200) {
-      showsnackbar("Title and Notes can't be null");
+      showsnackbar("Title and Notes can't be null", 3);
     }
     return "Success";
   }
@@ -70,18 +70,18 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         .listen((ConnectivityResult result) async {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {
-        showsnackbar("No Internet Access");
+        showsnackbar("Your Device is offline", 3);
       }
       if (connectivityResult == ConnectivityResult.mobile) {
-        showsnackbar("Connected");
+        showsnackbar("Connected", 3);
       }
       if (connectivityResult == ConnectivityResult.wifi) {
-        showsnackbar("Connected");
+        showsnackbar("Connected", 3);
       }
     });
   }
 
-  void showsnackbar(reason) {
+  void showsnackbar(reason, int time) {
     final snackbar = SnackBar(
       backgroundColor: Colors.black54,
       content: Text(
@@ -89,7 +89,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         style: TextStyle(
             color: Colors.white, fontFamily: "Rosemary", fontSize: 15),
       ),
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: time),
     );
     scaffoldkey.currentState.showSnackBar(snackbar);
   }
@@ -120,6 +120,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    bodyContainerController.dispose();
+    titleController.dispose();
+    bodyContainerController.dispose();
     super.dispose();
   }
 
@@ -283,13 +286,14 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                   child: Column(
                                     children: <Widget>[
                                       Container(
-                                        child: Text(
+                                        child: SelectableText(
                                           list[index]['body'],
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontFamily: "Rosemary"
                                               // color: Colors.black,
                                               ),
+                                          showCursor: false,
                                         ),
                                       ),
                                     ],
