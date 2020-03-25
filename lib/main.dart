@@ -2,7 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'dart:convert' show json;
+import 'dart:convert' show json, utf8;
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 
@@ -33,11 +33,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   final bodyController = TextEditingController();
 
   Future<String> notesout() async {
-    var respone = await http.get(
+    var response = await http.get(
         Uri.encodeFull("http://justinkhan.pythonanywhere.com/api/note_in"),
         headers: {"Accept": "application/json"});
     setState(() {
-      var convertojson = json.decode(respone.body);
+      var convertojson = json.decode(utf8.decode(response.bodyBytes));
       list = convertojson;
     });
     onlyanimate = [for (int i = 0; i < list.length; i++) false];
@@ -299,9 +299,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                             style: TextStyle(
                                               fontSize: 20,
                                               fontFamily: "Rosemary",
-                                              fontFamilyFallback: [
-                                                'EmojiOne',
-                                              ],
                                               // color: Colors.black,
                                             ),
                                           ),
