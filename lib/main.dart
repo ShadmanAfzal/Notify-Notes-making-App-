@@ -297,10 +297,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                           child: Text(
                                             list[index]['body'],
                                             style: TextStyle(
-                                                fontSize: 20,
-                                                fontFamily: "Rosemary"
-                                                // color: Colors.black,
-                                                ),
+                                              fontSize: 20,
+                                              fontFamily: "Rosemary",
+                                              fontFamilyFallback: [
+                                                'EmojiOne',
+                                              ],
+                                              // color: Colors.black,
+                                            ),
                                           ),
                                         ),
                                       ),
