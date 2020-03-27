@@ -27,8 +27,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   List onlyanimate = [];
   bool istap = false;
-  AnimationController bodyContainerController;
-  Animation<double> bodyAnimation;
+  // AnimationController bodyContainerController;
+  // Animation<double> bodyAnimation;
   final titleController = TextEditingController();
   final bodyController = TextEditingController();
 
@@ -98,7 +98,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   animationonly(int index) {
     for (int i = 0; i < onlyanimate.length; i++) {
       if (onlyanimate[index] == true) {
-        return bodyAnimation.value;
+        return null;
       } else {
         return 40.0;
       }
@@ -113,17 +113,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       refreshKey.currentState?.show();
     });
     this.notesout();
-    bodyContainerController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 100));
-    bodyAnimation = Tween<double>(begin: 40, end: 450).animate(CurvedAnimation(
-        parent: bodyContainerController, curve: Curves.bounceInOut));
   }
 
   @override
   void dispose() {
-    bodyContainerController.dispose();
     titleController.dispose();
-    bodyContainerController.dispose();
     super.dispose();
   }
 
@@ -246,10 +240,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   onTap: () {
                     setState(() {
                       if (istap) {
-                        bodyContainerController.reverse();
                         onlyanimate[index] = false;
                       } else {
-                        bodyContainerController.forward();
                         onlyanimate[index] = true;
                       }
                       istap = !istap;
