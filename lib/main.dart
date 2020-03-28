@@ -65,6 +65,20 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     return "Success";
   }
 
+  Future<String> update(id) async {
+    Map data1 = {
+      'id': id,
+      'title': titleController.text,
+      'body': bodyController.text
+    };
+    var response = await http
+        .post('http://justinkhan.pythonanywhere.com/api/update', body: data1);
+    if (response.statusCode != 200) {
+      showsnackbar("Title and Notes can't be null", 3);
+    }
+    return "Success";
+  }
+
   checkinternetaccees() async {
     Connectivity()
         .onConnectivityChanged
@@ -219,110 +233,170 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         onRefresh: notesout,
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            if (list == null) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Click to Add Notes",
-                    style: TextStyle(
-                        fontFamily: "DancingScript",
-                        fontSize: 30,
-                        color: Colors.white),
-                  )
-                ],
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (istap) {
-                        onlyanimate[index] = false;
-                      } else {
-                        onlyanimate[index] = true;
+            return Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (istap) {
+                      onlyanimate[index] = false;
+                    } else {
+                      onlyanimate[index] = true;
+                    }
+                    istap = !istap;
+                    onlyanimate[index] = !onlyanimate[index];
+                    animationonly(index);
+                    for (int i = 0; i < onlyanimate.length; i++) {
+                      if (index != i) {
+                        onlyanimate[i] = false;
                       }
-                      istap = !istap;
-                      onlyanimate[index] = !onlyanimate[index];
-                      animationonly(index);
-                      for (int i = 0; i < onlyanimate.length; i++) {
-                        if (index != i) {
-                          onlyanimate[i] = false;
-                        }
-                      }
-                    });
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      Card(
-                        child: Container(
-                          height: animationonly(index),
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Text(
-                                  list[index]['title'],
-                                  style: TextStyle(
-                                      fontSize: 23,
-                                      color: Colors.white,
-                                      fontFamily: "DancingScript"),
+                    }
+                  });
+                },
+                onLongPress: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        titleController.text = list[index]['title'];
+                        bodyController.text = list[index]['body'];
+                        return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            insetAnimationDuration: Duration(milliseconds: 300),
+                            insetAnimationCurve: Curves.easeIn,
+                            child: Container(
+                              child: Container(
+                                height: MediaQuery.of(context).size.height / 2,
+                                width: 500,
+                                margin: EdgeInsets.only(
+                                    left: 10, right: 10, top: 10),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      alignment: Alignment(1, 1),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          MdiIcons.close,
+                                          size: 30,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                    TextField(
+                                      maxLines: 1,
+                                      controller: titleController,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        prefixIcon: Icon(
+                                          MdiIcons.desktopMac,
+                                          color: Colors.white,
+                                        ),
+                                        hintText: "Title",
+                                      ),
+                                    ),
+                                    TextField(
+                                      maxLines: 8,
+                                      controller: bodyController,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Notes",
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() async {
+                                          await update("${list[index]['id']}");
+                                          await notesout();
+                                          bodyController.clear();
+                                          titleController.clear();
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      child: Text(
+                                        "Update",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontFamily: "DancingScript"),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        child: GestureDetector(
-                                          onLongPress: () {
-                                            Clipboard.setData(new ClipboardData(
-                                                text: list[index]['body']));
-                                            showsnackbar(
-                                                "Copied to Clipboard", 3);
-                                          },
-                                          child: Text(
-                                            list[index]['body'],
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: "Rosemary",
-                                              // color: Colors.black,
-                                            ),
+                            ));
+                      });
+                },
+                child: Stack(
+                  children: <Widget>[
+                    Card(
+                      child: Container(
+                        height: animationonly(index),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                list[index]['title'],
+                                style: TextStyle(
+                                    fontSize: 23,
+                                    color: Colors.white,
+                                    fontFamily: "DancingScript"),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      child: GestureDetector(
+                                        onLongPress: () {
+                                          Clipboard.setData(new ClipboardData(
+                                              text: list[index]['body']));
+                                          showsnackbar(
+                                              "Copied to Clipboard", 3);
+                                        },
+                                        child: Text(
+                                          list[index]['body'],
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "Rosemary",
+                                            // color: Colors.black,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                      Container(
-                        alignment: Alignment(1, 1),
-                        child: IconButton(
-                          onPressed: () async {
-                            await delete("${list[index]['id']}");
-                            await notesout();
-                          },
-                          iconSize: 25,
-                          icon: Icon(
-                            Icons.cancel,
-                            color: Colors.white,
-                          ),
+                    ),
+                    Container(
+                      alignment: Alignment(1, 1),
+                      child: IconButton(
+                        onPressed: () async {
+                          await delete("${list[index]['id']}");
+                          await notesout();
+                        },
+                        iconSize: 25,
+                        icon: Icon(
+                          Icons.cancel,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            }
+              ),
+            );
           },
           itemCount: list == null ? 1 : list.length,
         ),
