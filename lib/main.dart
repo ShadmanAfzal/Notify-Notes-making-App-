@@ -5,6 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'dart:convert' show json, utf8;
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:device_id/device_id.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -22,6 +23,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
+  String deviceid;
   List<dynamic> list = [];
   final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -33,12 +35,19 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   final bodyController = TextEditingController();
 
   Future<String> notesout() async {
+    deviceid = await DeviceId.getID;
     var response = await http.get(
         Uri.encodeFull("http://justinkhan.pythonanywhere.com/api/note_in"),
         headers: {"Accept": "application/json"});
     setState(() {
       var convertojson = json.decode(utf8.decode(response.bodyBytes));
-      list = convertojson;
+      var item = [];
+      for (int i = 0; i < convertojson.length; i++) {
+        if (convertojson[i]['modelid'] == deviceid) {
+          item.add(convertojson[i]);
+        }
+        list = item;
+      }
     });
     onlyanimate = [for (int i = 0; i < list.length; i++) false];
     return "Success";
@@ -56,7 +65,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Future<String> notes() async {
-    Map data1 = {'title': titleController.text, 'body': bodyController.text};
+    Map data1 = {
+      'deviceid': await DeviceId.getID,
+      'title': titleController.text,
+      'body': bodyController.text
+    };
     var response = await http
         .post('http://justinkhan.pythonanywhere.com/api/note_in', body: data1);
     if (response.statusCode != 200) {
@@ -146,6 +159,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           showDialog(
               context: context,
               builder: (BuildContext context) {
+                titleController.text = "";
+                bodyController.text = "";
                 return Dialog(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -233,6 +248,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         onRefresh: notesout,
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+            if (list[index][''] ==
+                () async {
+                  return await DeviceId.getID;
+                }) {}
             return Padding(
               padding: const EdgeInsets.only(top: 5),
               child: GestureDetector(
