@@ -157,10 +157,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         child: Icon(MdiIcons.plus, color: Colors.black),
         onPressed: () {
           showDialog(
+              barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
-                titleController.text = "";
-                bodyController.text = "";
                 return Dialog(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -300,6 +299,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                           size: 30,
                                         ),
                                         onPressed: () {
+                                          bodyController.clear();
+                                          titleController.clear();
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -310,7 +311,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         prefixIcon: Icon(
-                                          MdiIcons.desktopMac,
+                                          MdiIcons.timelineText,
                                           color: Colors.white,
                                         ),
                                         hintText: "Title",
