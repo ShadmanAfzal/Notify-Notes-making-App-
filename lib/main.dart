@@ -157,7 +157,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         child: Icon(MdiIcons.plus, color: Colors.black),
         onPressed: () {
           showDialog(
-              barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
                 return Dialog(
@@ -191,7 +190,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 prefixIcon: Icon(
-                                  MdiIcons.desktopMac,
+                                  MdiIcons.timelineText,
                                   color: Colors.white,
                                 ),
                                 hintText: "Title",
