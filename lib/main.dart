@@ -1,4 +1,5 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -157,6 +158,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         child: Icon(MdiIcons.plus, color: Colors.black),
         onPressed: () {
           showDialog(
+              barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
                 return Dialog(
@@ -175,6 +177,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                             Container(
                               alignment: Alignment(1, 1),
                               child: IconButton(
+                                splashColor: Colors.transparent,
                                 icon: Icon(
                                   MdiIcons.close,
                                   size: 30,
@@ -272,6 +275,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 },
                 onLongPress: () {
                   showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (BuildContext context) {
                         titleController.text = list[index]['title'];
@@ -401,9 +405,41 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     Container(
                       alignment: Alignment(1, 1),
                       child: IconButton(
-                        onPressed: () async {
-                          await delete("${list[index]['id']}");
-                          await notesout();
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  title: Text("Are you Sure",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontFamily: "DancingScript")),
+                                  actions: [
+                                    InkWell(
+                                      child: Center(
+                                          child: Text("No",
+                                              style: TextStyle(fontSize: 18))),
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    InkWell(
+                                      child: Center(
+                                          child: Text("Yes",
+                                              style: TextStyle(fontSize: 18))),
+                                      onTap: () async {
+                                        await delete("${list[index]['id']}");
+                                        await notesout();
+                                        bodyController.clear();
+                                        titleController.clear();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                         },
                         iconSize: 25,
                         icon: Icon(
