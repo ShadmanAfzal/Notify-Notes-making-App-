@@ -1,4 +1,4 @@
-package com.example.notify
+package com.shadmanafzal7.notify
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
