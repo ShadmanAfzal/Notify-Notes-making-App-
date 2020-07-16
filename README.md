@@ -1,4 +1,4 @@
-# notify
+# Notify
 
 A Flutter project.
 
